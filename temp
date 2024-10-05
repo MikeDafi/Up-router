@@ -1,0 +1,165 @@
+#!/bin/bash
+
+# Define the project name
+PROJECT_NAME="myapp"
+
+# Create the base directory
+mkdir -p $PROJECT_NAME
+
+# Create the directories following a production-ready structure
+mkdir -p $PROJECT_NAME/cmd/server
+mkdir -p $PROJECT_NAME/config
+mkdir -p $PROJECT_NAME/internal/{app,handler,repository,service}
+mkdir -p $PROJECT_NAME/pkg/{logger,response}
+mkdir -p $PROJECT_NAME/test
+mkdir -p $PROJECT_NAME/scripts
+
+# Create Go module
+cd $PROJECT_NAME
+go mod init $PROJECT_NAME
+
+# Create basic files
+touch cmd/server/main.go
+touch config/config.go
+touch internal/app/app.go
+touch internal/handler/handler.go
+touch internal/repository/user_repo.go
+touch internal/service/user_service.go
+touch pkg/logger/logger.go
+touch pkg/response/response.go
+touch test/handler_test.go
+touch scripts/setup_db.sh
+touch Dockerfile
+touch .gitignore
+touch README.md
+touch Makefile
+
+# Add initial content to .gitignore
+cat <<EOL > .gitignore
+# Binaries
+*.exe
+*.out
+*.test
+*.log
+*.db
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Go dependencies
+vendor/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+
+# Docker
+docker-compose.override.yml
+EOL
+
+# Add initial content to README.md
+cat <<EOL > README.md
+# $PROJECT_NAME
+
+## Overview
+This is a production-ready Go project, following clean architecture principles. 
+
+### Structure:
+\`\`\`
+$PROJECT_NAME/
+├── cmd/
+│   └── server/        # Entry point of the application
+├── config/            # Configuration and environment variables
+├── internal/          # Core application code
+│   ├── app/           # Application logic
+│   ├── handler/       # HTTP handlers
+│   ├── repository/    # Database interaction
+│   └── service/       # Business logic
+├── pkg/               # Shared utilities (logging, response)
+├── test/              # Unit and integration tests
+├── scripts/           # Helper scripts (e.g., DB setup)
+├── Makefile           # Makefile to automate build, run, and test tasks
+├── Dockerfile         # Containerization instructions
+├── .gitignore         # Git ignore files
+└── README.md          # Project overview and setup instructions
+\`\`\`
+
+## Setup Instructions
+1. Install Go 1.20 or later.
+2. Run \`go mod tidy\` to install dependencies.
+3. Build and run the server:
+
+\`\`\`bash
+make build
+make run
+\`\`\`
+EOL
+
+# Add basic Dockerfile content
+cat <<EOL > Dockerfile
+# Use official Go image
+FROM golang:1.20-alpine
+
+WORKDIR /app
+
+# Copy Go module files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the source code and build the application
+COPY . .
+RUN go build -o server ./cmd/server
+
+# Expose the port and start the server
+EXPOSE 8080
+CMD ["./server"]
+EOL
+
+# Add basic Makefile content
+cat <<EOL > Makefile
+# Project variables
+APP_NAME=$PROJECT_NAME
+BUILD_DIR=cmd/server
+BINARY_NAME=server
+
+# Build the Go application
+build:
+\t@echo "Building the Go application..."
+\tgo build -o \$(BUILD_DIR)/\$(BINARY_NAME) ./cmd/server
+
+# Run the Go application
+run: build
+\t@echo "Running the application..."
+\t\$(BUILD_DIR)/\$(BINARY_NAME)
+
+# Run tests
+test:
+\t@echo "Running tests..."
+\tgo test ./...
+
+# Clean up binaries
+clean:
+\t@echo "Cleaning up..."
+\trm -f \$(BUILD_DIR)/\$(BINARY_NAME)
+
+# Docker build
+docker-build:
+\t@echo "Building Docker image..."
+\tdocker build -t \$(APP_NAME):latest .
+
+# Docker run
+docker-run:
+\t@echo "Running Docker container..."
+\tdocker run -p 8080:8080 \$(APP_NAME):latest
+
+# Setup database
+db-setup:
+\t@echo "Setting up database..."
+\tbash scripts/setup_db.sh
+EOL
+
+# Output a completion message
+echo "Project structure created successfully!"
+
