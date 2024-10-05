@@ -1,0 +1,21 @@
+# Binaries
+*.exe
+*.out
+*.test
+*.log
+*.db
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Go dependencies
+vendor/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+
+# Docker
+docker-compose.override.yml
