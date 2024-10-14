@@ -11,10 +11,14 @@
           <option name="issueRegexp" value="RB[\-=](\d+)" />
           <option name="linkRegexp" value="https://go/rb $1" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="\(#(\d+)\)" />
+          <option name="linkRegexp" value="https://github.com/MikeDafi/Up-router/issues/$1" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="" vcs="Git" />
   </component>
 </project>
